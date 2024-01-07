@@ -1,7 +1,12 @@
+//Requiring express.
 const express = require("express");
-const app = express();
+//Requiring mongoose
 const mongoose = require("mongoose");
 
+const app = express();
+
+
+
 app.listen(3001,()=>{
-    console.log("Backend server is running")
-})
+    console.log("Connected to localhost:${PORT}")
+});
