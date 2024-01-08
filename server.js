@@ -1,12 +1,10 @@
-//Requiring express.
 const express = require("express");
-//Requiring mongoose
+const app = express();
 const mongoose = require("mongoose");
 
-const app = express();
-
+connect('mongodb://127.0.0.1:27017/networkAPI');
 
 
 app.listen(3001,()=>{
-    console.log("Connected to localhost:${PORT}")
-});
+    console.log("Backend server is running")
+})
