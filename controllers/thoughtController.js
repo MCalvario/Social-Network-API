@@ -1,16 +1,16 @@
-const { Thought, User } = require("../models");
+const { thought, user } = require("../models");
 
 const thoughtController = {
 //Getting all thoughts
   getAllThought(req, res) {
-    Thought.find({})
+    thought.find({})
       .populate({
         path: "reactions",
         select: "-__v",
       })
       .select("-__v")
       .sort({ _id: -1 })
-      .then((dbThoughtData) => res.json(dbThoughtData))
+      .then((dbthoughtData) => res.json(dbthoughtData))
       .catch((err) => {
         console.log(err);
         res.sendStatus(400);
@@ -18,19 +18,19 @@ const thoughtController = {
   },
 
   //Getting thoughts by ID
-  getThoughtById({ params }, res) {
-    Thought.findOne({ _id: params.id })
+  getthoughtById({ params }, res) {
+    thought.findOne({ _id: params.id })
       .populate({
         path: "reactions",
         select: "-__v",
       })
       .select("-__v")
-      .then((dbThoughtData) => {
-        if (!dbThoughtData) {
+      .then((dbthoughtData) => {
+        if (!dbthoughtData) {
         res.status(404).json({ message: "Unable to locate thought with this id!" });
         return;
         }
-        res.json(dbThoughtData);
+        res.json(dbthoughtData);
       })
       .catch((err) => {
         console.log(err);
@@ -39,10 +39,10 @@ const thoughtController = {
   },
 
 //Creating thoughts.
-  createThought({ params, body }, res) {
-    Thought.create(body)
+  createthought({ params, body }, res) {
+    thought.create(body)
       .then(({ _id }) => {
-        return User.findOneAndUpdate(
+        return user.findOneAndUpdate(
           { _id: body.userId },
           { $push: { thoughts: _id } },
           { new: true }
@@ -60,31 +60,31 @@ const thoughtController = {
   },
 
   // Updating Thoughts by id
-  updateThought({ params, body }, res) {
-    Thought.findOneAndUpdate({ _id: params.id }, body, {
+  updatethought({ params, body }, res) {
+    thought.findOneAndUpdate({ _id: params.id }, body, {
       new: true,
       runValidators: true,
     })
-      .then((dbThoughtData) => {
-        if (!dbThoughtData) {
+      .then((dbthoughtData) => {
+        if (!dbthoughtData) {
           res.status(404).json({ message: "Unable to locate thought with this id!" });
           return;
         }
-        res.json(dbThoughtData);
+        res.json(dbthoughtData);
       })
       .catch((err) => res.json(err));
   },
 
   // Deleting Thoughts
-  deleteThought({ params }, res) {
-    Thought.findOneAndDelete({ _id: params.id })
-      .then((dbThoughtData) => {
-        if (!dbThoughtData) {
+  deletethought({ params }, res) {
+    thought.findOneAndDelete({ _id: params.id })
+      .then((dbthoughtData) => {
+        if (!dbthoughtData) {
           return res.status(404).json({ message: "Unable to locate thought with this id!" });
         }
 
         // Removing thought ids.
-        return User.findOneAndUpdate(
+        return user.findOneAndUpdate(
           { thoughts: params.id },
           { $pull: { thoughts: params.id } },
           { new: true }
@@ -103,7 +103,7 @@ const thoughtController = {
 
   // Adding reactions
   addReaction({ params, body }, res) {
-    Thought.findOneAndUpdate(
+    thought.findOneAndUpdate(
       { _id: params.thoughtId },
       { $addToSet: { reactions: body } },
       { new: true, runValidators: true }
@@ -120,7 +120,7 @@ const thoughtController = {
 
   // Deleting reactions
   removeReaction({ params }, res) {
-    Thought.findOneAndUpdate(
+    thought.findOneAndUpdate(
       { _id: params.thoughtId },
       { $pull: { reactions: { reactionId: params.reactionId } } },
       { new: true }
